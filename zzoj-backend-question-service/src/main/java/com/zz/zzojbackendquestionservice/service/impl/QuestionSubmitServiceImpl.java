@@ -21,8 +21,8 @@ import com.zz.zzojbackendcommon.utils.SqlUtils;
 import com.zz.zzojbackendquestionservice.mapper.QuestionSubmitMapper;
 import com.zz.zzojbackendquestionservice.service.QuestionService;
 import com.zz.zzojbackendquestionservice.service.QuestionSubmitService;
-import com.zz.zzojbackendserviceclient.service.JudgeService;
-import com.zz.zzojbackendserviceclient.service.UserService;
+import com.zz.zzojbackendserviceclient.service.JudgeFeignClient;
+import com.zz.zzojbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
@@ -47,10 +47,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     private QuestionService questionService;
 
     @Resource
-    private UserService userService;
+    private UserFeignClient userFeignClient;
     @Resource
     @Lazy
-    private JudgeService judgeService;
+    private JudgeFeignClient judgeFeignClient;
 
     /**
      * 提交题目
@@ -90,7 +90,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Long questionSubmitId = questionSubmit.getId();
         //执行判题服务
         CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmitId);
+            judgeFeignClient.doJudge(questionSubmitId);
         });
         return questionSubmitId;
     }
@@ -133,11 +133,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     public QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser) {
         QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
         Long userId = questionSubmit.getUserId();
-        User submitUser=userService.getById(userId);
-        if(!Objects.equals(userId, questionSubmit.getUserId())&&!userService.isAdmin(loginUser)) {
+        User submitUser= userFeignClient.getById(userId);
+        if(!Objects.equals(userId, questionSubmit.getUserId())&&!userFeignClient.isAdmin(loginUser)) {
             questionSubmitVO.setCode(null);
         }
-        UserVO userVO = userService.getUserVO(submitUser);
+        UserVO userVO = userFeignClient.getUserVO(submitUser);
         questionSubmitVO.setUserVO(userVO);
         return questionSubmitVO;
     }

@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: zzoj-backend-user-service
+          uri: lb://zzoj-backend-user-service
+          predicates:
+            - Path=/api/user/**
+        - id: zzoj-backend-question-service
+          uri: lb://zzoj-backend-question-service
+          predicates:
+            - Path=/api/question/**
+        - id: zzoj-backend-judge-service
+          uri: lb://zzoj-backend-judge-service
+          predicates:
+            - Path=/api/judge/**
+  application:
+    name: zzoj-backend-gateway
+  main:
+    web-application-type: reactive
+server:
+  port: 8101
+knife4j:
+  gateway:
+    enabled: true # 开启Knife4j网关聚合功能
+    strategy: discover # 聚合策略：从注册中心发现微服务
+    discover:
+      enabled: true # 开启注册中心发现功能
+      version: swagger2 # 指定微服务使用的Swagger版本（swagger2，对应你的项目技术栈）
