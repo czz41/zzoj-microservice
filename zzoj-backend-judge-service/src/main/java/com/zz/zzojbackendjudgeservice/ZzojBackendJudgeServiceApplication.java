@@ -1,6 +1,6 @@
 package com.zz.zzojbackendjudgeservice;
 
-import org.mybatis.spring.annotation.MapperScan;
+import com.zz.zzojbackendjudgeservice.rabbitmq.InitRabbitMq;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -16,8 +16,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages ={"com.zz.zzojbackendserviceclient.service"})
 public class ZzojBackendJudgeServiceApplication {
-
     public static void main(String[] args) {
+        //初始化消息队列
+        InitRabbitMq.doInit();
         SpringApplication.run(ZzojBackendJudgeServiceApplication.class, args);
     }
 

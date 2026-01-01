@@ -6,9 +6,9 @@ spring:
   profiles:
     active: dev
   # 支持 swagger3
-#  mvc:
-#    pathmatch:
-#      matching-strategy: ant_path_matcher
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   # session 配置
   session:
     # todo 取消注释开启分布式 session（须先配置 Redis）
@@ -48,6 +48,7 @@ server:
     session:
       cookie:
         max-age: 2592000
+        path: /api
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

@@ -21,6 +21,9 @@ spring:
     name: zzoj-backend-gateway
   main:
     web-application-type: reactive
+  session:
+    # todo 取消注释开启分布式 session（须先配置 Redis）
+    store-type: redis
 server:
   port: 8101
 knife4j:

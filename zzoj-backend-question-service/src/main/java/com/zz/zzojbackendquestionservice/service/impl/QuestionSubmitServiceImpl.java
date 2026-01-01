@@ -19,6 +19,7 @@ import com.zz.zzojbackendcommon.model.vo.QuestionSubmitVO;
 import com.zz.zzojbackendcommon.model.vo.UserVO;
 import com.zz.zzojbackendcommon.utils.SqlUtils;
 import com.zz.zzojbackendquestionservice.mapper.QuestionSubmitMapper;
+import com.zz.zzojbackendquestionservice.rabbitmq.MyMessageProducer;
 import com.zz.zzojbackendquestionservice.service.QuestionService;
 import com.zz.zzojbackendquestionservice.service.QuestionSubmitService;
 import com.zz.zzojbackendserviceclient.service.JudgeFeignClient;
@@ -51,6 +52,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     @Lazy
     private JudgeFeignClient judgeFeignClient;
+
+    @Resource
+    private MyMessageProducer myMessageProducer;
 
     /**
      * 提交题目
@@ -89,9 +93,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         Long questionSubmitId = questionSubmit.getId();
         //执行判题服务
-        CompletableFuture.runAsync(() -> {
+        /*CompletableFuture.runAsync(() -> {
             judgeFeignClient.doJudge(questionSubmitId);
-        });
+        });*/
+        myMessageProducer.sendMessage("code_exchange","my_routingKey",String.valueOf(questionSubmitId));
         return questionSubmitId;
     }
 
